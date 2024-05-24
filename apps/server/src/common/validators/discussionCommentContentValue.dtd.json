@@ -1,0 +1,7 @@
+{
+  "tags": ["span"],
+  "attributes": {
+    "_all": ["contenteditable"],
+    "span": ["data-placeholder", "data-id", "data-placeholder-type"]
+  }
+}

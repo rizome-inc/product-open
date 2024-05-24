@@ -1,0 +1,3 @@
+.lb-portal {
+  z-index: 1500; /* the MUI drawer's z-index is 1200 */
+}

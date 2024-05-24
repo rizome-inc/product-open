@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm install ; 
+pnpm run --parallel -r typecheck ; 
+pnpm run --filter server lint ; 
+pnpm run --filter web lint ; 
+pnpm run --filter server format ; 
+pnpm run --filter web format ; 
+git add -u

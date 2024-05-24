@@ -1,0 +1,25 @@
+{
+  "name": "rizome",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install:server": "pnpm --filter server install",
+    "build:xylem": "pnpm --filter xylem build",
+    "build:server": "pnpm build:xylem && pnpm --filter server build:prod",
+    "start:server": "pnpm --filter server start:prod",
+    "dev:server": "pnpm --filter xylem watch & pnpm --filter server start:dev",
+    "install:web": "pnpm --filter web install",
+    "build:web": "pnpm build:xylem && pnpm --filter web build:prod",
+    "start:web": "pnpm --filter web start:prod",
+    "dev:web": "pnpm --filter xylem watch & pnpm --filter web dev",
+    "prepare": "husky install"
+  },
+  "resolutions": {
+    "@types/react": "18.0.29",
+    "@types/react-dom": "18.0.11"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "nx": "17.0.3"
+  }
+}

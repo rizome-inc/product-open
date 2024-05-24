@@ -1,0 +1,388 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SuperAdmin
+  Admin
+  User
+}
+
+enum UserStatus {
+  Active
+  Deactivated
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  uuid       String  @unique @default(uuid())
+  email      String  @unique
+  supabaseId String? @map("supabase_id")
+
+  firstName String?    @map("first_name")
+  lastName  String?    @map("last_name")
+  roles     UserRole[] @default(value: [User])
+  status    UserStatus @default(value: Active)
+
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId Int?          @map("organization_id")
+  avatar String?
+  collaborationColor String? @map("collaboration_color")
+
+  feedback       Feedback[]
+  supportTickets SupportTicket[]
+
+  discussionComments DiscussionComment[]
+
+  createdDiscussions       Discussion[] @relation(name: "creator")
+  participatingDiscussions Discussion[] @relation(name: "participant")
+
+  nofications      Notification[]
+  contributors     Contributor[]
+  projectApprovals ProjectApproval[]
+  projects         Project[]
+  projectTemplates ProjectTemplate[]
+  preferences      UserPreference?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([id, organizationId])
+  @@map("users")
+}
+
+model UserPreference {
+  id                 Int   @id @default(autoincrement())
+  emailNotifications Json? @map("email_notifications")
+  user               User  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId             Int   @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("user_preferences")
+}
+
+enum ContributorRole {
+  Owner
+  Approver
+  Contributor
+  ReadOnly
+}
+
+model Contributor {
+  id Int @id @default(autoincrement())
+
+  role ContributorRole
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId Int
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("contributors")
+}
+
+model Organization {
+  id Int @id @default(autoincrement())
+
+  name               String            @unique
+  users              User[]
+  projects           Project[]
+  projectTemplates   ProjectTemplate[]
+  projectDiscussions Discussion[]
+  fileAttachments    FileAttachment[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("organizations")
+}
+
+enum TemplateScope {
+  System
+  Organization
+  User
+}
+
+model ProjectTemplate {
+  id Int @id @default(autoincrement())
+
+  active         Boolean       @default(value: true)
+  content        Json
+  contentVersion Int           @default(1) @map("content_version")
+  description    String
+  example        String?
+  name           String
+  scope          TemplateScope @default(value: Organization)
+
+  creator        User?         @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creatorId      Int?          @map("creator_id")
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId Int?          @map("organization_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([organizationId])
+  @@index([scope])
+  @@map("project_templates")
+}
+
+model DefaultProjectTemplate {
+  id String @id @default(uuid())
+
+  active         Boolean       @default(value: true)
+  content        Json
+  contentVersion Int           @default(1) @map("content_version")
+  description    String
+  example        String?
+  name           String
+  scope          TemplateScope @default(value: System)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("default_project_templates")
+}
+
+enum ProjectStatus {
+  Active
+  Archived
+}
+
+model Project {
+  id          Int       @id @default(autoincrement())
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(3)
+
+  name           String
+  bussinessUnit  String?       @map("business_unit")
+  templateId     Int?          @map("template_id")
+  status         ProjectStatus @default(value: Active)
+  example        Boolean?
+
+  creator        User?         @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creatorId      Int?          @map("creator_id")
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId Int?          @map("organization_id")
+
+  workTrackingUrl  String? @map("work_tracking_url")
+  workTrackingName String? @map("work_tracking_name")
+  contentVersion Int           @default(1) @map("content_version") // we can use this for versioning if we want
+  content       Json?   @map("content")
+
+  roomId String? @map("room_id")
+  liveblocksContent Json? @map("liveblocks_content")
+  liveblocksComments Json[] @map("liveblocks_comments")
+
+  approvalHistory ProjectApproval[]
+  contributors    Contributor[]
+  discussions     Discussion[]
+  notifications   Notification[]
+  fileAttachments FileAttachment[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([organizationId, status])
+  @@map("projects")
+}
+
+enum ProjectApprovalResponse {
+  Approved
+  Rejected
+}
+
+model ProjectApproval {
+  id Int @id @default(autoincrement())
+
+  isActive        Boolean                 @default(true) @map("is_active")
+  response        ProjectApprovalResponse @default(value: Approved)
+  rejectionReason String?                 @map("rejection_reason")
+
+  creator      User        @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creatorId    Int         @map("creator_id")
+  discussion   Discussion? @relation(fields: [discussionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  discussionId Int?        @unique @map("discussion_id")
+  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId    Int         @map("project_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([projectId])
+  @@index([projectId, isActive, creatorId])
+  @@map("project_approvals")
+}
+
+model Discussion {
+  id Int @id @default(autoincrement())
+
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+
+  name    String
+  topic   String?
+  outcome String?
+
+  creator        User         @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade, name: "creator")
+  creatorId      Int          @map("creator_id")
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId      Int          @map("project_id")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId Int          @map("organization_id")
+
+  projectApproval ProjectApproval?
+
+  comments        DiscussionComment[]
+  fileAttachments FileAttachment[]
+  participants    User[]                     @relation(name: "participant")
+  linkedDocuments DiscussionLinkedDocument[]
+  notifications   Notification[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("discussions")
+}
+
+model DiscussionLinkedDocument {
+  id Int @id @default(autoincrement())
+
+  url          String
+  name         String
+  locationName String? @map("location_name")
+
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  discussionId Int        @map("discussion_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("discussion_linked_documents")
+}
+
+model DiscussionComment {
+  id Int @id @default(autoincrement())
+
+  content        Json
+  contentVersion Int  @default(1) @map("content_version")
+
+  creator         User             @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creatorId       Int              @map("creator_id")
+  discussion      Discussion       @relation(fields: [discussionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  discussionId    Int              @map("discussion_id")
+  fileAttachments FileAttachment[]
+  Notifications   Notification[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("discussion_comments")
+}
+
+enum NotificationType {
+  AddedAsDiscussionParticipant
+  AddedAsProjectContributor
+  DiscussionCommentMention
+  ProjectReviewRequested
+}
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+  readAt      DateTime? @map("read_at") @db.Timestamptz(3)
+
+  type NotificationType
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @map("user_id")
+
+  project             Project?           @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId           Int?               @map("project_id")
+  discussion          Discussion?        @relation(fields: [discussionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  discussionId        Int?               @map("discussion_id")
+  discussionComment   DiscussionComment? @relation(fields: [discussionCommentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  discussionCommentId Int?               @map("discussion_comment_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([id, userId, completedAt])
+  @@map("notifications")
+}
+
+model SupportTicket {
+  id Int @id @default(autoincrement())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId Int?    @map("user_id")
+  help   String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("support_tickets")
+}
+
+model Feedback {
+  id Int @id @default(autoincrement())
+
+  user       User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId     Int?    @map("user_id")
+  reason     String?
+  difficulty String?
+  preference String?
+  suggestion String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("feedback")
+}
+
+model FileAttachment {
+  uuid String @id @default(uuid())
+
+  path String // S3 file path? or something else?
+  name String
+
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId Int?          @map("organization_id")
+
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  discussion          Discussion?        @relation(fields: [discussionId], references: [id])
+  discussionId        Int?               @map("discussion_id")
+  discussionComment   DiscussionComment? @relation(fields: [discussionCommentId], references: [id])
+  discussionCommentId Int?               @map("discussion_comment_id")
+  Project             Project?           @relation(fields: [projectId], references: [id])
+  projectId           Int? @map("project_id")
+
+  @@map("file_attachments")
+}
+
+// Temp
+model ProjectContent {
+  id        Int      @id @default(autoincrement())
+
+  workTrackingUrl  String? @map("work_tracking_url")
+  workTrackingName String? @map("work_tracking_name")
+  formFields       Json? @map("form_fields")
+
+  projectId       Int                             @unique @map("project_id")
+
+  createdAt DateTime @db.Timestamptz(3) @default(now()) @map("created_at")
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt @map("updated_at")
+
+  @@map("project_content")
+}

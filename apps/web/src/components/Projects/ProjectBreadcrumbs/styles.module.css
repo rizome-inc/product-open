@@ -1,0 +1,10 @@
+.breadcrumb-link {
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.breadcrumb-link-last {
+  color: var(--content);
+  font-size: 14px;
+  line-height: 21px;
+}

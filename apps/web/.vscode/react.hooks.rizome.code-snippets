@@ -1,0 +1,42 @@
+{
+	"useCallback": {
+		"prefix": "useCallback",
+		"body": [
+			"const on${1} = React.useCallback(() => {",
+			"\t${0}",
+			"}, [${2}]);"
+		]
+	},
+	"useEffect": {
+		"prefix": "useEffect",
+		"body": [
+			"React.useEffect(() => {",
+			"\t${0}",
+			"}, [${1}]);"
+		]
+	},
+	"useState": {
+		"prefix": "useState",
+		"body": [
+			"const [${1:variableName}, set${1/(.*)/${1:/capitalize}/}] = React.useState<${2:type}>(${3});"
+		]
+	},
+	"useRef": {
+		"prefix": "useRef",
+		"body": [
+			"const ${1}Ref = React.useRef<${2:type}>(${3});"
+		]
+	},
+	"useConst": {
+		"prefix": "useConst",
+		"body": [
+			"const ${1} = React.useRef<${2:type}>(${3}).current;"
+		]
+	},
+	"useStylesRef": {
+		"prefix": "useStylesRef",
+		"body": [
+			"const ${1}Styles = React.useRef<StyleDeclarationValue[]>([styleSheet.${0}]).current;"
+		]
+	}
+}

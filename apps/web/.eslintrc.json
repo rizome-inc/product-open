@@ -1,0 +1,14 @@
+{
+  "extends": ["next/core-web-vitals", "eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+
+    "no-empty": "off",
+    "no-prototype-builtins": "off",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "no-useless-escape": "off"
+
+  }
+}

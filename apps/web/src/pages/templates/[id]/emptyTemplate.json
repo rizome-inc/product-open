@@ -1,0 +1,85 @@
+{
+  "name": "New Template",
+  "active": true,
+  "description": "This is a new project",
+  "example": "\"Example text here\"",
+  "type": "project",
+  "content": {
+    "categories": [
+      {
+        "description": "This section gathers context to allow your team to write good requirements",
+        "name": "Background",
+        "fields": [
+          {
+            "label": "Context for the project",
+						"description": "Why are you doing this project? What problem are you solving? What's the organizational context?",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "description":"This section defines what this project will achieve. The goal is to align stakeholders before development work begins.",
+        "name": "Requirements",
+        "fields": [
+          {
+            "label": "Decision this project will support",
+            "type": "text"
+          },
+          {
+            "label": "How the project outputs will be used",
+            "type": "text"
+          },
+          {
+            "label": "Sketch of final product",
+            "type": "image",
+            "description": "A napkin scribble will do! Even if the outcome is not visual, try to draw what will happen. The purpose of this is to make the real-world outcome concrete just in case the words are unclear."
+          },
+          {
+            "label": "Definition of done",
+						"description": "For this version, what will you deliver? What specific capabilities will be present",
+            "type": "text"
+          },
+          {
+            "label": "Decision logic",
+            "type": "text"
+          },
+          {
+            "label": "Models required (if any)",
+            "type": "text"
+          },
+          { "label": "Data required", "type": "text" },
+          {
+            "label": "Assumptions and risks",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "description": "This section ensures that present and future technical collaborators can locate project assets and dependencies",
+        "name": "Technical Details",
+        "fields": [
+          { "label": "Tags", "type": "tags" },
+          { "label": "Code repo", "type": "short-text" },
+          { "label": "Model inputs", "type": "text" },
+          { "label": "Model outputs", "type": "text" },
+          {
+            "label": "Datasets used",
+            "type": "array",
+            "subtype": "short-text"
+          },
+          {
+            "label": "Libraries used",
+            "type": "array",
+            "subtype": "short-text"
+          },
+          {
+            "label": "Other assets",
+            "type": "array",
+            "subtype": "short-text"
+          }
+        ]
+      }
+    ]
+  },
+  "contentVersion": 1
+}

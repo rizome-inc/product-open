@@ -1,0 +1,17 @@
+{
+  "name": "xylem",
+  "private": true,
+  "description": "API contract.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@ts-rest/core": "3.30.4",
+    "zod": "3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "5.2.2"
+  }
+}

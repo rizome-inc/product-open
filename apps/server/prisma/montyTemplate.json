@@ -1,0 +1,122 @@
+{
+  "name": "Monty",
+  "description": "All of our supported fields",
+  "example": "\"Based on their likelihood of churning, which customers should we reach out to?\"",
+  "active": true,
+  "scope": "Organization",
+  "content": {
+    "categories": [
+      {
+        "description": "This section defines what this project will achieve. The goal is to align stakeholders before discussing data science implementation.",
+        "fields": [
+          {
+            "label": "Text field",
+            "description": "",
+            "type": "text"
+          },
+          {
+            "label": "Checkbox field",
+            "description": "Example: Decide which customers to reach out to",
+            "type": "boolean"
+          },
+          {
+            "label": "Date field",
+            "description": "",
+            "type": "date"
+          },
+          {
+            "label": "Date range field",
+            "description": "",
+            "type": "date-range"
+          },
+          {
+            "label": "Image field",
+            "description": "A napkin scribble will do! Even if the outcome is not visual, try to draw what will happen. The purpose of this is to make the real-world outcome concrete just in case the words are unclear.",
+            "type": "image"
+          },
+          {
+            "label": "File field",
+            "description": "",
+            "type": "file"
+          },
+          {
+            "label": "Select field",
+            "description": "",
+            "type": "select",
+            "properties": {
+              "options": [
+                {
+                  "label": "label 1",
+                  "value": "value 1"
+                },
+                {
+                  "label": "label 2",
+                  "value": "value 2"
+                },
+                {
+                  "label": "label 3",
+                  "value": "value 3"
+                }
+              ]
+            }
+          },
+          {
+            "label": "Multiselect field",
+            "description": "",
+            "type": "multi-select",
+            "properties": {
+              "options": [
+                {
+                  "label": "label 1",
+                  "value": "value 1"
+                },
+                {
+                  "label": "label 2",
+                  "value": "value 2"
+                },
+                {
+                  "label": "label 3",
+                  "value": "value 3"
+                }
+              ]
+            }
+          },
+          {
+            "label": "Tags field",
+            "description": "",
+            "type": "tags"
+          },
+          {
+            "label": "Short text field",
+            "description": "",
+            "type": "short-text"
+          }
+        ],
+        "name": "Goals"
+      },
+      {
+        "description": "Here are all of the permutations of arrays.",
+        "fields": [
+          {
+            "label": "Short text array",
+            "description": "",
+            "type": "array",
+            "subtype": "short-text"
+          }
+        ],
+        "name": "Array fields"
+      },
+      {
+        "description": "Decision logic is recommended to be rendered by itself",
+        "fields": [
+          {
+            "label": "Decision Logic",
+            "description": "",
+            "type": "decision-logic"
+          }
+        ],
+        "name": "Decision logic"
+      }
+    ]
+  }
+}

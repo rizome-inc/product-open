@@ -1,0 +1,22 @@
+{
+  "usersession": {
+    "prefix": "usersession",
+    "body": [
+      "const {userSession} = $0useUserSessionContext();",
+      "const user = userSession?.user;",
+      "const organization = user?.organization;"
+    ]
+  },
+  "import-react": {
+    "prefix": "import-react",
+    "body": ["import * as React from \"react\";"]
+  },
+  "functional-component": {
+    "prefix": "func-comp",
+    "body": [
+      "export function ${TM_DIRECTORY/.*[\\\\|\\/]+(.*)/$1/}(props: React.PropsWithChildren) {",
+      "\treturn null;",
+      "};"
+    ]
+  }
+}
